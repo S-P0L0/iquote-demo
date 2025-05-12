@@ -2,35 +2,32 @@ import streamlit as st
 import pandas as pd
 import requests, io, time
 
-"""
-App – iQuote BTP  (option B : l’agent IA reste dans n8n)
---------------------------------------------------------
-▶ Ce Streamlit sert juste de vitrine pour la démo :
-   – Il collecte la description, le nom client et les photos.
-   – Il envoie le tout en multipart/form‑data vers ton webhook n8n PUBLIC.
-   – n8n renvoie un fichier Excel (binaire) contenant le devis.
-   – L’app affiche le devis et propose le téléchargement.
+# ─────────────────────────────────────────────────────────────────────────────
+#  App – iQuote BTP  (option B : l’agent IA reste dans n8n)
+# ─────────────────────────────────────────────────────────────────────────────
+#  Ce Streamlit sert de vitrine pour la démo :
+#    1. Collecte description, nom client, photos.
+#    2. Envoie tout en multipart/form‑data vers le webhook n8n PUBLIC.
+#    3. n8n renvoie un fichier Excel binaire.
+#    4. L’app affiche le devis + bouton de téléchargement.
+#
+#  prerequisites (requirements.txt) :
+#       streamlit==1.33.0
+#       pandas
+#       requests
+#       openpyxl
+# ─────────────────────────────────────────────────────────────────────────────
 
-À préparer :
-1. Ouvre ton n8n en public via Cloudflare Tunnel ou ngrok et remplace WEBHOOK_URL ci‑dessous.
-2. Assure‑toi que le dernier nœud n8n renvoie « Content‑Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet »
-   et le contenu du devis en binaire.
-3. requirements.txt minimal :
-      streamlit==1.33.0
-      pandas
-      requests
-      openpyxl
-"""
+# 👉 IMPORTANT : `set_page_config` DOIT être le tout premier appel Streamlit.
+st.set_page_config(page_title="iQuote BTP", page_icon=":abacus:", layout="centered")
 
-# 🔗 Indique ici l’URL HTTPS de ton webhook public (PAS localhost)
+# 🔗 URL HTTPS de ton webhook public (ngrok / Cloudflare Tunnel).  PAS localhost.
 WEBHOOK_URL = "https://74ac-2a01-cb1c-699-2d00-9d3d-6d15-dce6-8ea.ngrok-free.app"
 
-st.set_page_config(page_title="iQuote BTP", page_icon="🧮", layout="centered")
-
-# ------------------------------  UI  ---------------------------------------
+# ------------------------------  UI  ----------------------------------------
 st.title("📑 iQuote BTP — Générateur de devis IA")
 
-col1, col2 = st.columns([2,1])
+col1, col2 = st.columns([2, 1])
 with col1:
     description = st.text_area(
         "Description des travaux",
@@ -56,9 +53,10 @@ if st.button("🚀 Générer le devis"):
         "demande_client": description,
         "client_id": client,
     }
-    files = {}
-    for idx, photo in enumerate(photos):
-        files[f"photos{idx}"] = (photo.name, photo.getvalue(), photo.type)
+    files = {
+        f"photos{idx}": (photo.name, photo.getvalue(), photo.type)
+        for idx, photo in enumerate(photos)
+    }
 
     # --- appel du webhook ---------------------------------------------------
     with st.spinner("Envoi au moteur IA…"):
