@@ -22,7 +22,7 @@ import requests, io, time
 st.set_page_config(page_title="iQuote BTP", page_icon=":abacus:", layout="centered")
 
 # 🔗 URL HTTPS de ton webhook public (ngrok / Cloudflare Tunnel).  PAS localhost.
-WEBHOOK_URL = "https://74ac-2a01-cb1c-699-2d00-9d3d-6d15-dce6-8ea.ngrok-free.app"
+WEBHOOK_URL = "https://1d29-2a01-cb1c-699-2d00-3556-c29b-bbeb-932f.ngrok-free.app/"
 
 # ------------------------------  UI  ----------------------------------------
 st.title("📑 iQuote BTP — Générateur de devis IA")
